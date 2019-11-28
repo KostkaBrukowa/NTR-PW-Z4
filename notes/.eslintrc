@@ -1,0 +1,73 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+        "plugin:react/recommended",
+        // Uses the recommended rules from @eslint-plugin-react
+        "plugin:@typescript-eslint/recommended",
+        // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+        "prettier/@typescript-eslint",
+        // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+        "plugin:prettier/recommended"
+        // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+    ],
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "mocha": true,
+        "es6": true,
+        "jest": true
+    },
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        //        "space-before-function-paren": "off",
+        "react/prefer-stateless-function": "warn",
+        //        "react/jsx-one-expression-per-line": "off",
+        //        "import/no-extraneous-dependencies": [
+        //            "error",
+        //            { "devDependencies": true }
+        //        ],
+        //        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+        //        "linebreak-style": "off",
+        //        "global-require": "off",
+        //        "semi": "warn",
+        //        "arrow-body-style": "off",
+        "no-multiple-empty-lines": [
+            "warn",
+            {
+                "max": 1
+            }
+        ],
+        "no-unused-expressions": [
+            "error",
+            {
+                "allowTaggedTemplates": true
+            }
+        ],
+        "no-underscore-dangle": [
+            "error",
+            {
+                "allow": [
+                    "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"
+                ]
+            }
+        ]
+    },
+    "settings": {
+        "react": {
+            "pragma": "React",
+            // Pragma to use, default to "React"
+            "version": "detect"
+            // React version. "detect" automatically picks the version you have installed.
+        }
+    }
+}
