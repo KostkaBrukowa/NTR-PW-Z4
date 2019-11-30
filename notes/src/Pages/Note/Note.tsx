@@ -1,8 +1,12 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
 
-type OwnProps = RouteComponentProps;
+interface RouteProps {
+  noteId: number;
+}
+
+type OwnProps = RouteComponentProps<RouteProps>;
 
 export const Note: React.FC<OwnProps> = props => {
-  return <div>new note</div>;
+  return <div>Edit note {props.noteId} </div>;
 };

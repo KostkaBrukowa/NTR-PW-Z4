@@ -1,13 +1,13 @@
 import { Model } from './Model';
 
-class NoteModel extends Model<NoteModel> {
+export class NoteModel extends Model<NoteModel> {
   constructor(
-    readonly Id: number = 0,
-    readonly CreationDate: Date = new Date(),
-    readonly Title: string = '',
-    readonly Markdown: boolean = false,
-    readonly Content: string = '',
-    readonly Categories: string[] = []
+    readonly id: number = 0,
+    readonly creationDate: Date = new Date(),
+    readonly title: string = '',
+    readonly markdown: boolean = false,
+    readonly content: string = '',
+    readonly categories: string[] = []
   ) {
     super();
   }

@@ -8,6 +8,7 @@ import { Router } from '@reach/router';
 import { Container } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { green, purple } from '@material-ui/core/colors';
+import AppContext from './data/state/GlobalStateContext';
 
 const theme = createMuiTheme({
   palette: {
@@ -19,16 +20,18 @@ const theme = createMuiTheme({
 const App: React.FC = () => {
   return (
     <Fragment>
-      <ThemeProvider theme={theme}>
-        <MainContainer />
-        <Navbar />
-        <Container maxWidth={'md'}>
-          <Router>
-            <Home path="/" />
-            <Note path="/note" />
-          </Router>
-        </Container>
-      </ThemeProvider>
+      <AppContext>
+        <ThemeProvider theme={theme}>
+          <MainContainer />
+          <Navbar />
+          <Container maxWidth={'md'}>
+            <Router>
+              <Home path="/" />
+              <Note path="/note/:noteId" />
+            </Router>
+          </Container>
+        </ThemeProvider>
+      </AppContext>
     </Fragment>
   );
 };
