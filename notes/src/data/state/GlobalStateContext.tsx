@@ -1,5 +1,4 @@
-import React, { useReducer } from 'react';
-import { createContext, Dispatch } from 'react';
+import React, { createContext, Dispatch, useReducer } from 'react';
 import rootReducer, { Action } from './GlobalStateReducer';
 import { GlobalState } from './GlobalState';
 

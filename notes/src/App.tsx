@@ -6,7 +6,7 @@ import { Home } from './Pages/Home/Home';
 import { Note } from './Pages/Note/Note';
 import { Router } from '@reach/router';
 import { Container } from '@material-ui/core';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, StylesProvider, ThemeProvider } from '@material-ui/core/styles';
 import { green, purple } from '@material-ui/core/colors';
 import AppContext from './data/state/GlobalStateContext';
 
@@ -21,16 +21,18 @@ const App: React.FC = () => {
   return (
     <Fragment>
       <AppContext>
-        <ThemeProvider theme={theme}>
-          <MainContainer />
-          <Navbar />
-          <Container maxWidth={'md'}>
-            <Router>
-              <Home path="/" />
-              <Note path="/note/:noteId" />
-            </Router>
-          </Container>
-        </ThemeProvider>
+        <StylesProvider injectFirst>
+          <ThemeProvider theme={theme}>
+            <MainContainer />
+            <Navbar />
+            <Container maxWidth={'md'}>
+              <Router>
+                <Home path="/" />
+                <Note path="/note/:noteId" />
+              </Router>
+            </Container>
+          </ThemeProvider>
+        </StylesProvider>
       </AppContext>
     </Fragment>
   );

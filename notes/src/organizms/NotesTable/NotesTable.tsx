@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { NoteTableRow } from './NoteTableRow';
 import { NoteTablePagination } from './NoteTablePagination';
 import { StyledNotesCardContent } from './Styled';
