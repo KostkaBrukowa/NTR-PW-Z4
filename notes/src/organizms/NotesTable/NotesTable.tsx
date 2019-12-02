@@ -7,7 +7,7 @@ import { NoteModel } from '../../data/models/NoteModel';
 
 export const NotesTable: React.FC = props => {
   const notes = [
-    new NoteModel().copy({ title: 'Title of the first note', id: 1 }),
+    new NoteModel().copy({ title: 'Title of the first note', id: 0 }),
     new NoteModel().copy({ title: 'Title of the second note', id: 2 })
   ];
 

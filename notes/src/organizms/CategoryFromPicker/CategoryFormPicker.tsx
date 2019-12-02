@@ -10,7 +10,7 @@ export const CategoryFormPicker: React.FC<FieldArrayRenderProps> = props => {
   const [category, setCategory] = useState('');
 
   const handleAddCategoryButtonClick = (): void => {
-    if (categories.includes(category)) {
+    if (!category || categories.includes(category)) {
       return;
     }
 
@@ -29,7 +29,7 @@ export const CategoryFormPicker: React.FC<FieldArrayRenderProps> = props => {
       </StyledCategoriesWrapper>
       <StyledCategoryInputWrapper>
         <TextField value={category} onChange={event => setCategory(event.target.value)} label="Add category" />
-        <Button variant="outlined" color="secondary" onClick={handleAddCategoryButtonClick}>
+        <Button variant="outlined" color="secondary" onClick={handleAddCategoryButtonClick} size="small">
           Add category
         </Button>
       </StyledCategoryInputWrapper>
