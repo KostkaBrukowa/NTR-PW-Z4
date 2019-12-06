@@ -8,6 +8,12 @@ import { useFetchAllNotes } from '../../hooks/note-requests/useNoteRequest';
 export const NotesTable: React.FC = props => {
   const [isLoading, notes, reloadNotes] = useFetchAllNotes();
 
+  const handleDelete = () => {
+    console.log('reload');
+
+    reloadNotes();
+  };
+
   return (
     <StyledNotesCardContent isLoading={isLoading} title="Loading...">
       <Table aria-label="simple table">
@@ -23,7 +29,7 @@ export const NotesTable: React.FC = props => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {notes && notes.map(note => <NoteTableRow note={note} key={note.id!} onDelete={reloadNotes} />)}
+          {notes && notes.map(note => <NoteTableRow note={note} key={note.id!} onDelete={handleDelete} />)}
         </TableBody>
       </Table>
       <NoteTablePagination allElementsCount={notes ? notes.length : 0} />

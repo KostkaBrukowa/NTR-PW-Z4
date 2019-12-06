@@ -19,6 +19,7 @@ export const NoteTableRow: React.FC<OwnProps> = ({ note, onDelete }) => {
 
   const handleDelete = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.stopPropagation();
+    console.log('deleted');
 
     deleteNote();
   };

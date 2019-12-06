@@ -11,7 +11,7 @@ export const Navbar: React.FC = () => {
           <StyledLink to="/">Notes</StyledLink>
         </StyledButton>
         <StyledButton color="inherit">
-          <StyledLink to="/note">New note</StyledLink>
+          <StyledLink to="/note/new">New note</StyledLink>
         </StyledButton>
       </Toolbar>
     </AppBar>

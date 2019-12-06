@@ -18,11 +18,12 @@ import { FormValues } from './Note';
 
 interface OwnProps extends FormikProps<FormValues> {
   isLoading: boolean;
+  isPosting: boolean;
 }
 
-export const Form: React.FC<OwnProps> = ({ isSubmitting, isLoading, handleSubmit }) => {
-  const spinnerVisible = isSubmitting || isLoading;
-  const spinnerLabel = isSubmitting ? 'Saving...' : 'Loading...';
+export const Form: React.FC<OwnProps> = ({ isPosting, isLoading, handleSubmit, errors }) => {
+  const spinnerVisible = isPosting || isLoading;
+  const spinnerLabel = isPosting ? 'Saving...' : 'Loading...';
 
   return (
     <StyledCard isLoading={spinnerVisible} title={spinnerLabel}>

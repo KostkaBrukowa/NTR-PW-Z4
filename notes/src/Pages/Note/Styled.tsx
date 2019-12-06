@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { Button, Card, TextField, Typography } from '@material-ui/core';
-import { Spinner } from '../../molecules/Spinner/Styled';
+import { Spinner, SpinnerProps } from '../../molecules/Spinner/Styled';
+import React from 'react';
+import { CardProps } from '@material-ui/core/Card';
 
 export const StyledTitleField = styled(TextField)`
   grid-column: 1 / span 2;
@@ -14,7 +16,7 @@ export const StyledTypography = styled(Typography)`
   grid-column: 1 / span 3;
 `;
 
-export const StyledCard = styled(Card)`
+export const StyledCard = styled(({ isLoading, ...props }: SpinnerProps & CardProps) => <Card {...props} />)`
   ${Spinner}
   margin: 16px;
 `;
