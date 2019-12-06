@@ -21,7 +21,7 @@ export const NoteTablePagination: React.FC<OwnProps> = ({ allElementsCount }) =>
 
   return (
     <TablePagination
-      rowsPerPageOptions={[5, 10, 25]}
+      rowsPerPageOptions={[1, 10, 25]}
       component="div"
       count={allElementsCount}
       rowsPerPage={pageSize}

@@ -1,8 +1,15 @@
 export interface NoteDTO {
-  Id: string;
-  CreationDate: string;
-  Title: string;
-  Markdown: boolean;
-  Content: string;
-  Categories: string[];
+  id: string;
+  creationDate: string;
+  title: string;
+  markdown: boolean;
+  content: string;
+  categories: string[];
+}
+
+export interface NoteRequestDTO {
+  title: string;
+  markdown: boolean;
+  content: string;
+  categories: string[];
 }

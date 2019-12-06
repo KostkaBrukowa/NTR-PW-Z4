@@ -16,6 +16,7 @@
     "formik": "^2.0.6",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-fetch-hook": "^1.7.1",
     "react-scripts": "3.2.0",
     "styled-components": "^4.4.1",
     "typescript": "3.7.2",
@@ -28,6 +29,7 @@
     "eject": "react-scripts eject",
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
   },
+  "proxy": "http://localhost:5000",
   "eslintConfig": {
     "extends": "react-app"
   },

@@ -1,25 +1,10 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Link, navigate, RouteComponentProps } from '@reach/router';
-import { Field, FieldArray, Formik, FormikConfig, withFormik } from 'formik';
+import { navigate, RouteComponentProps } from '@reach/router';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
-import {
-  StyledButtonWrapper,
-  StyledCancelButton,
-  StyledCard,
-  StyledContentField,
-  StyledForm,
-  StyledTitleField,
-  StyledTypography,
-  StyledWrapper
-} from './Styled';
-import { CheckboxFormField } from '../../molecules/CheckboxFormField';
-import { CategoryFormPicker } from '../../organizms/CategoryFromPicker/CategoryFormPicker';
-import { Button } from '@material-ui/core';
-import { TextFormField } from '../../molecules/TextFormField';
 import { FormikHelpers } from 'formik/dist/types';
-import { StyledLink } from '../../organizms/Navbar/Styled';
-import { Spinner } from '../../molecules/Spinner/Spinner';
-import { NoteModel } from '../../data/models/NoteModel';
+import { useFetchNote } from '../../hooks/note-requests/useNoteRequest';
+import { Form } from './Form';
 
 interface RouteProps {
   noteId: string;
@@ -27,7 +12,7 @@ interface RouteProps {
 
 type OwnProps = RouteComponentProps<RouteProps>;
 
-interface FormValues {
+export interface FormValues {
   title: string;
   content: string;
   categories: string[];
@@ -59,21 +44,13 @@ export const Note: React.FC<OwnProps> = ({ noteId }) => {
     content: '',
     categories: []
   });
-  const [noteFetching, setNoteFetching] = useState(true);
+  const [isLoading, note] = useFetchNote(noteId);
 
   useEffect(() => {
-    if (noteId !== '0') {
-      setInitialValues(
-        new NoteModel().copy({
-          title: 'test initial',
-          content: 'test initial content',
-          categories: []
-        })
-      );
+    if (note) {
+      setInitialValues(note);
     }
-
-    setNoteFetching(false);
-  }, [noteId]);
+  }, [note]);
 
   const handleSubmit: SubmitHandler<FormValues> = (values, formikHelpers) => {
     const promise1 = new Promise(function(resolve, reject) {
@@ -87,40 +64,14 @@ export const Note: React.FC<OwnProps> = ({ noteId }) => {
     });
   };
 
-  if (noteFetching) {
-    return null;
-  }
-
   return (
-    <Formik<FormValues> initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
-      {({ handleSubmit, errors, values, isSubmitting }): ReactNode => (
-        <StyledWrapper>
-          {isSubmitting && <Spinner label="Saving..." />}
-          <StyledCard isSubmitting={isSubmitting}>
-            <StyledForm onSubmit={handleSubmit}>
-              <StyledTypography variant="body1">Add new note</StyledTypography>
-              <TextFormField name="title" label="Title" as={StyledTitleField} />
-              <CheckboxFormField name="markdown" label="Markdown" type="checkbox" />
-              <TextFormField name="content" label="Content" rows={2} as={StyledContentField} />
-              <FieldArray name="categories">
-                {(arrayProps): ReactNode => <CategoryFormPicker {...arrayProps} />}
-              </FieldArray>
-              {/*<pre>{JSON.stringify(values, null, 2)}</pre>*/}
-              {/*<pre>{JSON.stringify(errors, null, 2)}</pre>*/}
-            </StyledForm>
-            <StyledButtonWrapper>
-              <Button color="primary" variant="contained" onClick={(): void => handleSubmit()}>
-                Save note
-              </Button>
-              <StyledLink to="/">
-                <StyledCancelButton color="secondary" variant="contained">
-                  Cancel
-                </StyledCancelButton>
-              </StyledLink>
-            </StyledButtonWrapper>
-          </StyledCard>
-        </StyledWrapper>
-      )}
+    <Formik<FormValues>
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}
+      enableReinitialize
+    >
+      {(formProps): ReactNode => <Form {...formProps} isLoading={isLoading} />}
     </Formik>
   );
 };
