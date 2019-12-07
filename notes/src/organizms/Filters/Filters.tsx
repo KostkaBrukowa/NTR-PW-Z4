@@ -20,9 +20,6 @@ export const Filters: React.FC = () => {
       <DateField id="from" label="Date from" defaultValue={dateFromDatetime(dateFrom)} onChange={setDateFrom} />
       <DateField id="to" label="Date to" defaultValue={dateFromDatetime(dateTo)} onChange={setDateTo} />
       <CategoryPicker category={category} onChange={setCategory} />
-      <Button color="primary" variant="contained" size="large">
-        Filter
-      </Button>
       <Button color="secondary" variant="contained" size="large" onClick={clearFilters}>
         Clear
       </Button>

@@ -7,6 +7,11 @@ export interface NoteDTO {
   categories: string[];
 }
 
+export interface PaginatedNotesDTO {
+  values: NoteDTO[];
+  total: number;
+}
+
 export interface NoteRequestDTO {
   title: string;
   markdown: boolean;

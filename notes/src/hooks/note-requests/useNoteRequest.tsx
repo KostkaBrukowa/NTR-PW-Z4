@@ -1,6 +1,6 @@
 import { NoteModel } from '../../data/models/NoteModel';
 import useFetch from 'react-fetch-hook';
-import { NoteDTO } from '../../data/contracts/NoteContract';
+import { PaginatedNotesDTO } from '../../data/contracts/NoteContract';
 import { fromResponse, toResponse } from '../../data/mappers/NoteMapper';
 import { useContext, useEffect, useState } from 'react';
 import { GlobalStateStore } from '../../data/state/GlobalStateContext';
@@ -12,8 +12,9 @@ function useTriggerableFetch<T>(
   options: useFetch.HookOptions | useFetch.HookOptionsWithFormatter<T>
 ): [() => void, useFetch.FetchResult<T>] {
   const [requestSent, setRequestSent] = useState(false);
+  const depends = [requestSent, ...(options.depends ? options.depends : [])];
   const fetchValues = useFetch<T>(query, {
-    depends: [requestSent, ...(options.depends ? options.depends : [])],
+    depends,
     ...options
   });
 
@@ -52,25 +53,21 @@ function useTriggerableStatusFetch(
 
       setCallbackCalled(true);
     }
-  }, [requestSucceed, callback]);
+  }, [requestSucceed, callback, callbackCalled]);
 
   return [trigger, isLoading, statusCode, error];
 }
 
-export function useFetchAllNotes(): [boolean, NoteModel[] | undefined, () => void] {
+export function useFetchAllNotes(): [boolean, NoteModel[] | undefined, number | undefined, () => void] {
   const [callCount, setCallCount] = useState(1);
   const { state } = useContext(GlobalStateStore);
-  const { data, isLoading } = useFetch<NoteDTO[]>(`${ADRESS}/values?${state.filters.toQueryParams()}`, {
+  const { data, isLoading } = useFetch<PaginatedNotesDTO>(`${ADRESS}/values?${state.filters.toQueryParams()}`, {
     depends: [callCount]
   });
 
-  const reload = (): void => {
-    // console.log('reload');
-    setCallCount(callCount + 1);
-  };
-  console.log('callCount: ', callCount);
+  const reload = (): void => setCallCount(callCount + 1);
 
-  return [isLoading, data && data.map(fromResponse), reload];
+  return [isLoading, data && data.values.map(fromResponse), data && data.total, reload];
 }
 
 export function useFetchNote(id: string | undefined): [boolean, NoteModel | undefined] {
@@ -97,13 +94,13 @@ export function useFetchSaveNote(
   note: NoteModel | null,
   onPostCallback?: () => void
 ): [() => void, boolean, string, number | undefined] {
-  const [trigger, isLoading, statusCode, error] = useTriggerableStatusFetch(`/api/values`, 201, onPostCallback, {
-    method: 'POST',
+  const [trigger, isLoading, statusCode, error] = useTriggerableStatusFetch(`/api/values`, 200, onPostCallback, {
+    method: note && note.id ? 'PUT' : 'POST',
     body: note && JSON.stringify(toResponse(note)),
     headers: {
       'Content-Type': 'application/json'
     },
-    depends: [note]
+    depends: [Boolean(note)]
   });
 
   return [trigger, isLoading, error, statusCode];

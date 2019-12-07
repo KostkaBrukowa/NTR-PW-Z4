@@ -24,6 +24,14 @@ export interface FormValues {
 
 type SubmitHandler<Values> = (values: Values, formikHelpers: FormikHelpers<Values>) => void | Promise<any>;
 
+const defaultInitialValues = {
+  id: null,
+  title: '',
+  markdown: false,
+  content: '',
+  categories: []
+};
+
 const validationSchema = Yup.object<FormValues>({
   id: Yup.string().nullable(),
   title: Yup.string()
@@ -42,19 +50,19 @@ const validationSchema = Yup.object<FormValues>({
 });
 
 export const Note: React.FC<OwnProps> = ({ noteId }) => {
-  const [initialValues, setInitialValues] = useState<FormValues>({
-    id: null,
-    title: '',
-    markdown: false,
-    content: '',
-    categories: []
-  });
+  const [initialValues, setInitialValues] = useState<FormValues>(defaultInitialValues);
   const [isLoading, note] = useFetchNote(noteId == 'new' ? undefined : noteId);
   const [noteToPost, setNoteToPost] = useState<NoteModel | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [postNote, isPosting, error] = useFetchSaveNote(noteToPost, () => {
     navigate('/');
   });
+
+  useEffect(() => {
+    if (noteId === 'new') {
+      setInitialValues(defaultInitialValues);
+    }
+  }, [noteId]);
 
   useEffect(() => {
     if (note) {

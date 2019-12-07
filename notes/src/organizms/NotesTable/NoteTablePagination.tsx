@@ -3,7 +3,7 @@ import { TablePagination } from '@material-ui/core';
 import { useFilters } from '../../hooks/filters/useFilters';
 
 interface OwnProps {
-  allElementsCount: number;
+  allElementsCount?: number;
 }
 
 type PageChanger = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => void;
@@ -21,9 +21,9 @@ export const NoteTablePagination: React.FC<OwnProps> = ({ allElementsCount }) =>
 
   return (
     <TablePagination
-      rowsPerPageOptions={[1, 10, 25]}
+      rowsPerPageOptions={[5, 10, 25]}
       component="div"
-      count={allElementsCount}
+      count={allElementsCount || 0}
       rowsPerPage={pageSize}
       page={page}
       onChangePage={handlePageChange}

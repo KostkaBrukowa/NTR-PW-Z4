@@ -6,11 +6,9 @@ import { StyledNotesCardContent } from './Styled';
 import { useFetchAllNotes } from '../../hooks/note-requests/useNoteRequest';
 
 export const NotesTable: React.FC = props => {
-  const [isLoading, notes, reloadNotes] = useFetchAllNotes();
+  const [isLoading, notes, total, reloadNotes] = useFetchAllNotes();
 
   const handleDelete = () => {
-    console.log('reload');
-
     reloadNotes();
   };
 
@@ -32,7 +30,7 @@ export const NotesTable: React.FC = props => {
           {notes && notes.map(note => <NoteTableRow note={note} key={note.id!} onDelete={handleDelete} />)}
         </TableBody>
       </Table>
-      <NoteTablePagination allElementsCount={notes ? notes.length : 0} />
+      <NoteTablePagination allElementsCount={total} />
     </StyledNotesCardContent>
   );
 };

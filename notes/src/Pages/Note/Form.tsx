@@ -21,18 +21,20 @@ interface OwnProps extends FormikProps<FormValues> {
   isPosting: boolean;
 }
 
-export const Form: React.FC<OwnProps> = ({ isPosting, isLoading, handleSubmit, errors }) => {
+export const Form: React.FC<OwnProps> = ({ isPosting, isLoading, handleSubmit, values, errors }) => {
   const spinnerVisible = isPosting || isLoading;
   const spinnerLabel = isPosting ? 'Saving...' : 'Loading...';
 
   return (
     <StyledCard isLoading={spinnerVisible} title={spinnerLabel}>
       <StyledForm onSubmit={handleSubmit}>
-        <StyledTypography variant="body1">Add new note</StyledTypography>
+        <StyledTypography variant="body1">{values.id ? 'Edit' : 'Add new'} note</StyledTypography>
         <TextFormField name="title" label="Title" as={StyledTitleField} />
         <CheckboxFormField name="markdown" label="Markdown" type="checkbox" />
         <TextFormField name="content" label="Content" rows={2} as={StyledContentField} />
-        <FieldArray name="categories">{(arrayProps): ReactNode => <CategoryFormPicker {...arrayProps} />}</FieldArray>
+        <FieldArray name="categories" validateOnChange>
+          {(arrayProps): ReactNode => <CategoryFormPicker {...arrayProps} />}
+        </FieldArray>
       </StyledForm>
       <StyledButtonWrapper>
         <Button color="primary" variant="contained" onClick={(): void => handleSubmit()}>
