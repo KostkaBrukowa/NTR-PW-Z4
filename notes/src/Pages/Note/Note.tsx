@@ -51,7 +51,7 @@ const validationSchema = Yup.object<FormValues>({
 
 export const Note: React.FC<OwnProps> = ({ noteId }) => {
   const [initialValues, setInitialValues] = useState<FormValues>(defaultInitialValues);
-  const [isLoading, note] = useFetchNote(noteId == 'new' ? undefined : noteId);
+  const [isLoading, note] = useFetchNote(noteId === 'new' ? undefined : noteId);
   const [noteToPost, setNoteToPost] = useState<NoteModel | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [postNote, isPosting, error] = useFetchSaveNote(noteToPost, () => {

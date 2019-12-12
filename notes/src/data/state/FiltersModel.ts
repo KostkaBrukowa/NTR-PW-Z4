@@ -2,8 +2,6 @@ import { Model } from '../models/Model';
 import { weekAgo } from '../../utils/Date';
 
 function formatDate(date: Date): string {
-  console.log('date: ', date);
-  console.log(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 

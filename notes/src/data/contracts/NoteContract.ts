@@ -13,6 +13,7 @@ export interface PaginatedNotesDTO {
 }
 
 export interface NoteRequestDTO {
+  id: string | null;
   title: string;
   markdown: boolean;
   content: string;

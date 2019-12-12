@@ -12,8 +12,9 @@ export function fromResponse(noteDTO: NoteDTO): NoteModel {
 }
 
 export function toResponse(note: NoteModel): NoteRequestDTO {
-  const { categories, content, title, markdown } = note;
+  const { id, categories, content, title, markdown } = note;
   return {
+    id,
     title,
     markdown,
     content,
