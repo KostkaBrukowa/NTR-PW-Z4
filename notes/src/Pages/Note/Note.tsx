@@ -1,25 +1,12 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Link, navigate, RouteComponentProps } from '@reach/router';
-import { Field, FieldArray, Formik, FormikConfig, withFormik } from 'formik';
+import { navigate, RouteComponentProps } from '@reach/router';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
-import {
-  StyledButtonWrapper,
-  StyledCancelButton,
-  StyledCard,
-  StyledContentField,
-  StyledForm,
-  StyledTitleField,
-  StyledTypography,
-  StyledWrapper
-} from './Styled';
-import { CheckboxFormField } from '../../molecules/CheckboxFormField';
-import { CategoryFormPicker } from '../../organizms/CategoryFromPicker/CategoryFormPicker';
-import { Button } from '@material-ui/core';
-import { TextFormField } from '../../molecules/TextFormField';
 import { FormikHelpers } from 'formik/dist/types';
-import { StyledLink } from '../../organizms/Navbar/Styled';
-import { Spinner } from '../../molecules/Spinner/Spinner';
+import { useFetchNote, useFetchSaveNote } from '../../hooks/note-requests/useNoteRequest';
+import { Form } from './Form';
 import { NoteModel } from '../../data/models/NoteModel';
+import { ErrorDialog } from '../../molecules/Dialog/Dialog';
 
 interface RouteProps {
   noteId: string;
@@ -27,7 +14,8 @@ interface RouteProps {
 
 type OwnProps = RouteComponentProps<RouteProps>;
 
-interface FormValues {
+export interface FormValues {
+  id: string | null;
   title: string;
   content: string;
   categories: string[];
@@ -36,7 +24,16 @@ interface FormValues {
 
 type SubmitHandler<Values> = (values: Values, formikHelpers: FormikHelpers<Values>) => void | Promise<any>;
 
+const defaultInitialValues = {
+  id: null,
+  title: '',
+  markdown: false,
+  content: '',
+  categories: []
+};
+
 const validationSchema = Yup.object<FormValues>({
+  id: Yup.string().nullable(),
   title: Yup.string()
     .min(3)
     .max(64)
@@ -53,74 +50,55 @@ const validationSchema = Yup.object<FormValues>({
 });
 
 export const Note: React.FC<OwnProps> = ({ noteId }) => {
-  const [initialValues, setInitialValues] = useState<FormValues>({
-    title: '',
-    markdown: false,
-    content: '',
-    categories: []
+  const [initialValues, setInitialValues] = useState<FormValues>(defaultInitialValues);
+  const [isLoading, note] = useFetchNote(noteId === 'new' ? undefined : noteId);
+  const [noteToPost, setNoteToPost] = useState<NoteModel | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [postNote, isPosting, error] = useFetchSaveNote(noteToPost, () => {
+    navigate('/');
   });
-  const [noteFetching, setNoteFetching] = useState(true);
 
   useEffect(() => {
-    if (noteId !== '0') {
-      setInitialValues(
-        new NoteModel().copy({
-          title: 'test initial',
-          content: 'test initial content',
-          categories: []
-        })
-      );
+    if (noteId === 'new') {
+      setInitialValues(defaultInitialValues);
     }
-
-    setNoteFetching(false);
   }, [noteId]);
 
-  const handleSubmit: SubmitHandler<FormValues> = (values, formikHelpers) => {
-    const promise1 = new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        resolve('foo');
-      }, 1000);
-    });
+  useEffect(() => {
+    if (note) {
+      setInitialValues(note);
+    }
+  }, [note]);
 
-    return promise1.then(() => {
-      navigate('/');
-    });
+  useEffect(() => {
+    if (error) {
+      setNoteToPost(null);
+      setDialogOpen(true);
+    }
+  }, [error]);
+
+  const handleSubmit: SubmitHandler<FormValues> = (values): void => {
+    setNoteToPost(new NoteModel().copy({ ...initialValues, ...values }));
+    postNote();
   };
 
-  if (noteFetching) {
-    return null;
-  }
-
   return (
-    <Formik<FormValues> initialValues={initialValues} onSubmit={handleSubmit} validationSchema={validationSchema}>
-      {({ handleSubmit, errors, values, isSubmitting }): ReactNode => (
-        <StyledWrapper>
-          {isSubmitting && <Spinner label="Saving..." />}
-          <StyledCard isSubmitting={isSubmitting}>
-            <StyledForm onSubmit={handleSubmit}>
-              <StyledTypography variant="body1">Add new note</StyledTypography>
-              <TextFormField name="title" label="Title" as={StyledTitleField} />
-              <CheckboxFormField name="markdown" label="Markdown" type="checkbox" />
-              <TextFormField name="content" label="Content" rows={2} as={StyledContentField} />
-              <FieldArray name="categories">
-                {(arrayProps): ReactNode => <CategoryFormPicker {...arrayProps} />}
-              </FieldArray>
-              {/*<pre>{JSON.stringify(values, null, 2)}</pre>*/}
-              {/*<pre>{JSON.stringify(errors, null, 2)}</pre>*/}
-            </StyledForm>
-            <StyledButtonWrapper>
-              <Button color="primary" variant="contained" onClick={(): void => handleSubmit()}>
-                Save note
-              </Button>
-              <StyledLink to="/">
-                <StyledCancelButton color="secondary" variant="contained">
-                  Cancel
-                </StyledCancelButton>
-              </StyledLink>
-            </StyledButtonWrapper>
-          </StyledCard>
-        </StyledWrapper>
-      )}
-    </Formik>
+    <>
+      <ErrorDialog
+        headingText="There was an error in a form"
+        infoText="Please try again"
+        actions={['Ok']}
+        onClose={(): void => setDialogOpen(false)}
+        open={dialogOpen}
+      />
+      <Formik<FormValues>
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+        enableReinitialize
+      >
+        {(formProps): ReactNode => <Form {...formProps} isPosting={isPosting} isLoading={isLoading} />}
+      </Formik>
+    </>
   );
 };

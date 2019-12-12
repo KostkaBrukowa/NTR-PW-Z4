@@ -1,8 +1,21 @@
 export interface NoteDTO {
-  Id: string;
-  CreationDate: string;
-  Title: string;
-  Markdown: boolean;
-  Content: string;
-  Categories: string[];
+  id: string;
+  creationDate: string;
+  title: string;
+  markdown: boolean;
+  content: string;
+  categories: string[];
+}
+
+export interface PaginatedNotesDTO {
+  values: NoteDTO[];
+  total: number;
+}
+
+export interface NoteRequestDTO {
+  id: string | null;
+  title: string;
+  markdown: boolean;
+  content: string;
+  categories: string[];
 }

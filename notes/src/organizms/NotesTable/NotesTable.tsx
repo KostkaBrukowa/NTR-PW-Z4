@@ -3,16 +3,17 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/c
 import { NoteTableRow } from './NoteTableRow';
 import { NoteTablePagination } from './NoteTablePagination';
 import { StyledNotesCardContent } from './Styled';
-import { NoteModel } from '../../data/models/NoteModel';
+import { useFetchAllNotes } from '../../hooks/note-requests/useNoteRequest';
 
 export const NotesTable: React.FC = props => {
-  const notes = [
-    new NoteModel().copy({ title: 'Title of the first note', id: 0 }),
-    new NoteModel().copy({ title: 'Title of the second note', id: 2 })
-  ];
+  const [isLoading, notes, total, reloadNotes] = useFetchAllNotes();
+
+  const handleDelete = () => {
+    reloadNotes();
+  };
 
   return (
-    <StyledNotesCardContent>
+    <StyledNotesCardContent isLoading={isLoading} title="Loading...">
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -26,12 +27,10 @@ export const NotesTable: React.FC = props => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {notes.map(note => (
-            <NoteTableRow note={note} key={note.id} onDelete={() => {}} />
-          ))}
+          {notes && notes.map(note => <NoteTableRow note={note} key={note.id!} onDelete={handleDelete} />)}
         </TableBody>
       </Table>
-      <NoteTablePagination allElementsCount={notes.length} />
+      <NoteTablePagination allElementsCount={total} />
     </StyledNotesCardContent>
   );
 };

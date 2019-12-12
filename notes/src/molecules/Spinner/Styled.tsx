@@ -1,5 +1,4 @@
-import styled, { keyframes } from 'styled-components';
-import { Typography } from '@material-ui/core';
+import { css, FlattenSimpleInterpolation, keyframes } from 'styled-components';
 
 const spin = keyframes`
   0% {
@@ -13,27 +12,38 @@ const spin = keyframes`
   }
 `;
 
-export const StyledDiv = styled.div`
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-`;
+export interface SpinnerProps {
+  readonly title?: string;
+  readonly isLoading: boolean;
+}
 
-export const StyledSpinner = styled.div`
+const spinnerWidth = 25;
+const spinnerHeight = 5;
+
+export const Spinner = (props: SpinnerProps): FlattenSimpleInterpolation => css`
   position: relative;
+  & > * {
+    opacity: ${props.isLoading ? 0.3 : 1};
+  }
 
-  &::after {
-    content: '';
-    width: 25px;
-    height: 5px;
+  &::before {
+    content: ${props.isLoading ? '' : 'none'}'';
+    z-index: 1;
+    width: ${spinnerWidth}px;
+    height: ${spinnerHeight}px;
     background: aqua;
     position: absolute;
+    left: calc(50% - ${spinnerWidth / 2}px);
+    top: calc(50% - ${spinnerHeight / 2}px);
     animation: ${spin} 1s linear infinite;
   }
-`;
-export const StyledLoadingText = styled(Typography)`
-  position: absolute;
-  transform: translate(-25%, 16px);
+
+  &::after {
+    content: '${props.isLoading ? props.title : undefined}';
+    font-size: 1.5rem;
+    position: absolute;
+    left: calc(50% - ${spinnerWidth / 2}px);
+    top: calc(50% - ${spinnerHeight / 2}px + 1rem);
+    transform: translateX(-25%);
+  }
 `;
