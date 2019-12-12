@@ -18,8 +18,8 @@ namespace Z01.Repositories
             var allFiles = Directory.EnumerateFiles(_path, "*.note.*");
 
             return allFiles
-                    .Select(file => NoteModel.FromString(File.ReadAllText(file), file))
-                    .ToList();
+                .Select(file => NoteModel.FromString(File.ReadAllText(file), file))
+                .ToList();
         }
 
         public void SaveNoteToDatabase(NoteModel note)

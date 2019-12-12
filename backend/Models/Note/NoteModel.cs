@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -31,7 +30,8 @@ namespace Z01.Models
             Id = id;
         }
 
-        public NoteModel(string id, DateTime creationDate, string title, bool markdown, string content, string[] categories)
+        public NoteModel(string id, DateTime creationDate, string title, bool markdown, string content,
+            string[] categories)
         {
             Id = id;
             CreationDate = creationDate;
@@ -49,20 +49,17 @@ namespace Z01.Models
         [StringLength(60, MinimumLength = 3)]
         public string Title { get; set; }
 
-        [Required]
-        public bool Markdown { get; set; }
+        [Required] public bool Markdown { get; set; }
 
         [Required]
         [StringLength(1060, MinimumLength = 3)]
         public string Content { get; set; }
 
-        [Required]
-        [MinLength(1)]
-        public string[] Categories { get; set; }
+        [Required] [MinLength(1)] public string[] Categories { get; set; }
 
         public override string ToString()
         {
-            var categories = String.Join(", ", Categories);
+            var categories = string.Join(", ", Categories);
             var date = $"{CreationDate:yyyy-MM-dd}";
 
             return $"id: {Id}\n" +

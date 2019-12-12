@@ -19,15 +19,9 @@ namespace Z01.services
 
         private void UpdateNote(NoteModel note, List<NoteModel> notes)
         {
-            if (!notes.Exists(it => it.Id == note.Id))
-            {
-                throw new EntityNotFoundException();
-            }
+            if (!notes.Exists(it => it.Id == note.Id)) throw new EntityNotFoundException();
 
-            if (!IsTitleUnique(note, notes))
-            {
-                throw new TitleNotUniqueException();
-            }
+            if (!IsTitleUnique(note, notes)) throw new TitleNotUniqueException();
 
             _noteRepository.RemoveNote(note.Id);
             _noteRepository.SaveNoteToDatabase(note);
@@ -35,10 +29,7 @@ namespace Z01.services
 
         private void SaveNewNote(NoteModel note, List<NoteModel> notes)
         {
-            if (!IsTitleUnique(note, notes))
-            {
-                throw new TitleNotUniqueException();
-            }
+            if (!IsTitleUnique(note, notes)) throw new TitleNotUniqueException();
 
             _noteRepository.SaveNoteToDatabase(new NoteModel(note, Guid.NewGuid().ToString()));
         }
@@ -48,7 +39,8 @@ namespace Z01.services
             var notes = _noteRepository.LoadNotes();
             var filteredNotes = notes
                 .Where(it =>
-                    filterModel.SelectedCategory == null || it.Categories.Contains(filterModel.SelectedCategory.ToLower()))
+                    filterModel.SelectedCategory == null ||
+                    it.Categories.Contains(filterModel.SelectedCategory.ToLower()))
                 .Where(it => it.CreationDate >= filterModel.From)
                 .Where(it => it.CreationDate <= filterModel.To)
                 .ToList();
@@ -81,10 +73,7 @@ namespace Z01.services
         {
             var removeSucceed = _noteRepository.RemoveNote(id);
 
-            if (!removeSucceed)
-            {
-                throw new EntityNotFoundException();
-            }
+            if (!removeSucceed) throw new EntityNotFoundException();
         }
     }
 }
