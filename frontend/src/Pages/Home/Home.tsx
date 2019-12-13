@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import { StyledCard } from './Styled';
 import { Filters } from '../../organizms/Filters/Filters';

@@ -14,6 +14,7 @@ export const StyledDiv = styled.div`
 
 export const StyledIconButton = styled(IconButton)`
   width: 25%;
+  transform: scaleY(0.9);
 `;
 
 export const StyledTypography = styled(Typography)`

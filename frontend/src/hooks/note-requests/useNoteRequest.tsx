@@ -94,7 +94,6 @@ export function useFetchSaveNote(
   note: NoteModel | null,
   onPostCallback?: () => void
 ): [() => void, boolean, string, number | undefined] {
-  console.log(note);
   const [trigger, isLoading, statusCode, error] = useTriggerableStatusFetch(`/api/values`, 200, onPostCallback, {
     method: note && note.id ? 'PUT' : 'POST',
     body: note && JSON.stringify(toResponse(note)),

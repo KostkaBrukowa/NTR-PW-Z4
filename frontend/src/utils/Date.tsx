@@ -6,5 +6,9 @@ export function weekAgo(): Date {
 }
 
 export function dateFromDatetime(date: Date): string {
-  return date.toISOString().slice(0, 10);
+  try {
+    return date.toISOString().slice(0, 10);
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
 }

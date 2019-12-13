@@ -24,6 +24,7 @@ export const CategoryFormPicker: React.FC<FieldArrayRenderProps> = ({ push, remo
     }
 
     push(category);
+    setCategory('');
   };
 
   const handleRemove = (categoryName: string): void => remove(categories.indexOf(categoryName));
