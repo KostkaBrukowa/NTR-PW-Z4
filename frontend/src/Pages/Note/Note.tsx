@@ -10,6 +10,7 @@ import { ErrorDialog } from '../../molecules/Dialog/Dialog';
 
 interface RouteProps {
   noteId: string;
+  style: React.CSSProperties;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;
@@ -49,7 +50,7 @@ const validationSchema = Yup.object<FormValues>({
     .max(10)
 });
 
-export const Note: React.FC<OwnProps> = ({ noteId }) => {
+export const Note: React.FC<OwnProps> = ({ noteId, style }) => {
   const [initialValues, setInitialValues] = useState<FormValues>(defaultInitialValues);
   const [isLoading, note] = useFetchNote(noteId === 'new' ? undefined : noteId);
   const [noteToPost, setNoteToPost] = useState<NoteModel | null>(null);
@@ -83,7 +84,7 @@ export const Note: React.FC<OwnProps> = ({ noteId }) => {
   };
 
   return (
-    <>
+    <div style={style}>
       <ErrorDialog
         headingText="There was an error in a form"
         infoText="Please try again"
@@ -99,6 +100,6 @@ export const Note: React.FC<OwnProps> = ({ noteId }) => {
       >
         {(formProps): ReactNode => <Form {...formProps} isPosting={isPosting} isLoading={isLoading} />}
       </Formik>
-    </>
+    </div>
   );
 };
