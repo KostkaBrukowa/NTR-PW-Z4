@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Z01.Models;
 using Z01.services;
 
 namespace Z4.Controllers
@@ -8,7 +9,14 @@ namespace Z4.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly CategoryService _categoriesService = new CategoryService();
+        private readonly NoteService _noteService;
+        private readonly MyContext _myContext;
+
+        public CategoriesController(MyContext myContext)
+        {
+            _myContext = myContext;
+            _noteService = new NoteService(myContext);
+        }
 
         // GET api/categories
         [HttpGet]
@@ -16,13 +24,13 @@ namespace Z4.Controllers
         {
             return new CategoriesResponse
             {
-                Categories = _categoriesService.GetAllCategories()
+                Categories = _noteService.GetAllCategories()
             };
         }
 
         public class CategoriesResponse
         {
-            public IEnumerable<string> Categories { get; set; }
+            public IEnumerable<Category> Categories { get; set; }
         }
     }
 }

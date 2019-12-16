@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Z01.Models;
 
 namespace Z4
 {
@@ -31,6 +33,15 @@ namespace Z4
                     });
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddDbContext<MyContext>(opt =>
+                opt.UseInMemoryDatabase("AllList"));
+//           services.AddDbContext<MyContext>(options =>
+//               options.UseSqlServer(Configuration.GetConnectionString("MyContext"))); 
+//            services.AddDbContext<CategoryContext>(opt =>
+//                opt.UseInMemoryDatabase("CategoryList"));
+//            services.AddDbContext<NoteCategoryContext>(opt =>
+//                opt.UseInMemoryDatabase("NoteCategoryList"));
+ 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

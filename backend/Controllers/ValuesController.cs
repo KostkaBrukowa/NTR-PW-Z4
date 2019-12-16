@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Z01.Exceptions;
 using Z01.Models;
 using Z01.services;
+using Z4.dto;
+using Z4.Mappers;
 
 namespace Z4.Controllers
 {
@@ -13,20 +17,29 @@ namespace Z4.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly NoteService _noteService = new NoteService();
+        private readonly NoteService _noteService;
+        private readonly MyContext _myContext;
+
+        public ValuesController(MyContext myContext)
+        {
+            _myContext = myContext;
+            _noteService = new NoteService(myContext);
+        }
 
         // GET api/values
         [HttpGet]
-        public ActionResult<PaginatedResponse<NoteModel>> Get([FromQuery] NoteFilterModel filters)
+        public ActionResult<PaginatedResponse<NoteResponseDTO>> Get([FromQuery] NoteFilterModel filters)
         {
-            var (total, notes) = _noteService.GetAllNotes(filters);
+            var (maxPages, total, notes) = _noteService.GetAllNotes(filters);
+            var noteMapper = new NoteMapper();
+            var noteResponse = notes.Select(_ => noteMapper.mapNoteToResponse(_));
 
-            return new PaginatedResponse<NoteModel> {total = total, values = notes};
+            return new PaginatedResponse<NoteResponseDTO> {total = total, values = noteResponse};
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<NoteModel> Get(string id)
+        public ActionResult<Note> Get(int id)
         {
             return _noteService.GetNoteById(id);
         }
@@ -34,11 +47,12 @@ namespace Z4.Controllers
         // POST api/values
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Post([FromBody] NoteModel note)
+        public ActionResult Post([FromBody] NoteRequestDTO note)
         {
             try
             {
-                _noteService.SaveNote(note);
+                var noteMapper = new NoteMapper();
+                _noteService.SaveNote(noteMapper.mapResponseToNote(note), note.Categories.ToArray());
                 return Ok();
             }
             catch (TitleNotUniqueException)
@@ -49,11 +63,12 @@ namespace Z4.Controllers
 
         // PUT api/values
         [HttpPut]
-        public ActionResult Put([FromBody] NoteModel note)
+        public ActionResult Put([FromBody] NoteRequestDTO note)
         {
             try
             {
-                _noteService.SaveNote(note);
+                var noteMapper = new NoteMapper();
+                _noteService.SaveNote(noteMapper.mapResponseToNote(note), note.Categories.ToArray());
                 return Ok();
             }
             catch (TitleNotUniqueException)
@@ -64,11 +79,11 @@ namespace Z4.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public StatusCodeResult Delete(string id)
+        public async Task<StatusCodeResult> Delete(int id, byte[] rowVersion)
         {
             try
             {
-                _noteService.RemoveNote(id);
+                await _noteService.RemoveNote(id, rowVersion);
                 return NoContent();
             }
             catch (EntityNotFoundException)

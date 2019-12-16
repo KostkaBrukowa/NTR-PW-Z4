@@ -84,7 +84,7 @@ export const Note: React.FC<OwnProps> = ({ noteId, style }) => {
   };
 
   return (
-    <div style={style}>
+    <div style={{ ...style, willChange: 'transform, opacity' }}>
       <ErrorDialog
         headingText="There was an error in a form"
         infoText="Please try again"

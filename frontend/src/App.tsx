@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode } from 'react';
+import React, { Fragment, ReactNode, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
 
 import { Navbar } from './organizms/Navbar/Navbar';
@@ -29,18 +29,31 @@ interface LocationRouterProps {
 }
 
 const LocationRouter: React.FC<LocationRouterProps> = ({ location }) => {
-  const homeProps = useSpring({
-    opacity: location.pathname === '/' ? 1 : 0
+  const flipped = location.pathname !== '/';
+  const { transform, opacity } = useSpring({
+    opacity: flipped ? 1 : 0,
+    transform: `perspective(1000px) rotateY(${flipped ? 180 : 0}deg)`,
+    config: { mass: 5, tension: 500, friction: 80 }
   });
-  const noteProps = useSpring({
-    opacity: location.pathname === '/' ? 0 : 1
-  });
-
   return (
-    <Router location={location}>
-      <AnimatedHome path="/" style={homeProps} />
-      <AnimatedNote path="/note/:noteId" style={noteProps} />
-    </Router>
+    <div>
+      <AnimatedHome
+        style={{
+          opacity: opacity.interpolate(o => (o && typeof o === 'number' ? 1 - o : 1)),
+          transform,
+          zIndex: flipped ? 0 : 1,
+          position: 'relative'
+        }}
+      />
+      <AnimatedNote
+        style={{
+          opacity,
+          transform: transform.interpolate(t => `translateY(-60%) ${t} rotateY(180deg)`),
+          zIndex: flipped ? 1 : 0,
+          position: 'relative'
+        }}
+      />
+    </div>
   );
 };
 
