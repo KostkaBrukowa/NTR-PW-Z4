@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Z01.Models;
 
 namespace Z4
 {
@@ -7,7 +9,30 @@ namespace Z4
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+            using (IServiceScope scope = host.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<MyContext>();
+
+                context.Notes.Add(
+                    new Note
+                    {
+                        Title = "First Author",
+                        Description = "First descp",
+                    }
+                );
+                context.Notes.Add(
+                    new Note
+                    {
+                        Title = "Second Author",
+                        Description = "Second descp",
+                    }
+                );
+
+                context.SaveChanges();
+            }
+
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)

@@ -152,5 +152,17 @@ namespace Z01.services
 
       return noteCategories;
     }
+
+    public List<string> GetNoteCategories(int noteId)
+    {
+      var categories = _myContext.NoteCategories
+          .Include(it => it.Category)
+          .Include(it => it.Note)
+          .Where(it => it.Note.NoteID == noteId)
+          .Select(it => it.Category.Name)
+          .ToList();
+
+      return categories;
+    }
   }
 }

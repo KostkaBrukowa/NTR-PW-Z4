@@ -4,7 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using GraphiQl;
+using GraphQL;
+using GraphQL.Types;
 using Z01.Models;
+using Z4.GraphQL;
 
 namespace Z4
 {
@@ -37,11 +41,8 @@ namespace Z4
                 opt.UseInMemoryDatabase("AllList"));
 //           services.AddDbContext<MyContext>(options =>
 //               options.UseSqlServer(Configuration.GetConnectionString("MyContext"))); 
-//            services.AddDbContext<CategoryContext>(opt =>
-//                opt.UseInMemoryDatabase("CategoryList"));
-//            services.AddDbContext<NoteCategoryContext>(opt =>
-//                opt.UseInMemoryDatabase("NoteCategoryList"));
- 
+            var sp = services.BuildServiceProvider();
+            services.AddSingleton<ISchema>(new NoteSchema(new FuncDependencyResolver(type => sp.GetService(type))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +55,7 @@ namespace Z4
                 app.UseHsts();
 
             app.UseCors(MyAllowSpecificOrigins);
+            app.UseGraphiQl("/graphql");
             app.UseHttpsRedirection();
             app.UseMvc();
         }
