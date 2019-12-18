@@ -124,7 +124,8 @@ namespace Z4.Controllers
 
             var schema = new Schema
             {
-                Query = new NoteResolver(_myContext)
+                Query = new NoteQuery(_myContext),
+                Mutation = new NoteMutation(_myContext)
             };
 
             var result = await new DocumentExecuter().ExecuteAsync(_ =>

@@ -8,7 +8,7 @@ namespace Z01.Models
   [Table("Note")]
   public class Note
   {
-    public int NoteID { get; set; }
+    public int? NoteID { get; set; }
     public DateTime NoteDate { get; set; } = DateTime.Now;
     public bool Markdown { get; set; }
     [Required]
@@ -19,5 +19,7 @@ namespace Z01.Models
     [Timestamp]
     public byte[] RowVersion { get; set; }
     public List<NoteCategory> NoteCategories { get; set; }
+    [NotMapped]
+    public string[] Categories { get; set; }
   }
 }

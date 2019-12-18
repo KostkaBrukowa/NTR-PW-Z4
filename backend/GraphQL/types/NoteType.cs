@@ -16,7 +16,7 @@ namespace Z4.GraphQL.types
             Field(x => x.Description).Description("Description of note");
             Field(x => x.Markdown).Description("Markdown was selected");
             Field(x => x.NoteDate).Description("Markdown was selected");
-//            Field("rowVersion",x => x.RowVersion).Description("Markdown was selected");
+//            Field("rowVersion",x => x.RowVersion, type: typeof(ListGraphType<SByteGraphType>)).Description("Markdown was selected");
             Field("categories", x => x.NoteCategories.Select(_ => _.Category.Name),
                     type: typeof(ListGraphType<StringGraphType>))
                 .Description("Note categories");

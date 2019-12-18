@@ -26,7 +26,7 @@ namespace Z4.Mappers
             {
                 Description = note.Description ?? "",
                 Markdown = note.Markdown,
-                NoteID = note.NoteID,
+//                NoteID = note.NoteID,
                 Title = note.Title,
                 RowVersion = note.RowVersion,
                 NoteDate = note.NoteDate,

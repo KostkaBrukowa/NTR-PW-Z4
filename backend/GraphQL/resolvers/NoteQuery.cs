@@ -5,11 +5,11 @@ using Z4.GraphQL.types;
 
 namespace Z4.GraphQL.resolvers
 {
-    public class NoteResolver : ObjectGraphType
+    public class NoteQuery : ObjectGraphType
     {
         private NoteService _noteService;
 
-        public NoteResolver(MyContext dbContext)
+        public NoteQuery(MyContext dbContext)
         {
             _noteService = new NoteService(dbContext);
             Name = "Query";
@@ -21,7 +21,14 @@ namespace Z4.GraphQL.resolvers
 
             Field<ListGraphType<NoteType>>(
                 "notes",
-                resolve: context => _noteService.GetAllNotes(new NoteFilterModel()).Item3);
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<NoteFiltersType>> {Name = "noteFilters"}
+                ),
+                resolve: context => _noteService.GetAllNotes(context.GetArgument<NoteFilterModel>("noteFilters")).Item3);
+
+            Field<ListGraphType<StringGraphType>>(
+                "categories",
+                resolve: context => _noteService.GetAllCategories());
         }
     }
 }

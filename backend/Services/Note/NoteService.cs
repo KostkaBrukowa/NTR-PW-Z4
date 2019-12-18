@@ -8,161 +8,165 @@ using Z01.Models;
 
 namespace Z01.services
 {
-  public class NoteService
-  {
-    private readonly MyContext _myContext;
-
-    public NoteService(MyContext myContext)
+    public class NoteService
     {
-      _myContext = myContext;
-    }
+        private readonly MyContext _myContext;
 
-    private void UpdateCategories(Note noteToUpdate, string[] categories)
-    {
-      foreach (var categoryName in categories)
-      {
-        if (noteToUpdate.NoteCategories.Any(it => it.Category.Name == categoryName)) continue;
-
-        var category = _myContext.Categories.SingleOrDefault(t => t.Name == categoryName);
-
-        if (category == null)
+        public NoteService(MyContext myContext)
         {
-          category = new Category { Name = categoryName };
-          _myContext.Categories.Add(category);
+            _myContext = myContext;
         }
 
-        noteToUpdate.NoteCategories.Add(new NoteCategory()
+        private void UpdateCategories(Note noteToUpdate, string[] categories)
         {
-          Category = category,
-          Note = noteToUpdate,
-          CategoryID = category.CategoryID,
-          NoteID = noteToUpdate.NoteID
-        });
-      }
+            foreach (var categoryName in categories)
+            {
+                if (noteToUpdate.NoteCategories.Any(it => it.Category.Name == categoryName)) continue;
 
-      var categoriesToDelete = noteToUpdate.NoteCategories
-          .Where(noteCategory => categories.All(it => it != noteCategory.Category.Name))
-          .ToList();
+                var category = _myContext.Categories.SingleOrDefault(t => t.Name == categoryName);
 
-      categoriesToDelete.ForEach(it => noteToUpdate.NoteCategories.Remove(it));
-    }
+                if (category == null)
+                {
+                    category = new Category {Name = categoryName};
+                    _myContext.Categories.Add(category);
+                }
 
-    private async Task<bool> UpdateNote(Note note, string[] categories)
-    {
-      var noteToUpdate = _myContext.Notes
-          .Include(it => it.NoteCategories)
-          .ThenInclude(it => it.Category)
-          .FirstOrDefault(it => it.NoteID == note.NoteID);
+                noteToUpdate.NoteCategories.Add(new NoteCategory()
+                {
+                    Category = category,
+                    Note = noteToUpdate,
+                    CategoryID = category.CategoryID,
+                    NoteID = noteToUpdate.NoteID ?? 0
+                });
+            }
 
-      if (noteToUpdate == null)
-      {
-        throw new EntityNotFoundException();
-      }
+            var categoriesToDelete = noteToUpdate.NoteCategories
+                .Where(noteCategory => categories.All(it => it != noteCategory.Category.Name))
+                .ToList();
 
-      _myContext.Entry(noteToUpdate).Property("RowVersion").OriginalValue = note.RowVersion;
+            categoriesToDelete.ForEach(it => noteToUpdate.NoteCategories.Remove(it));
+        }
 
-      noteToUpdate.Title = note.Title;
-      noteToUpdate.Description = note.Description;
-      noteToUpdate.Markdown = note.Markdown;
+        private async Task<bool> UpdateNote(Note note, string[] categories)
+        {
+            var noteToUpdate = _myContext.Notes
+                .Include(it => it.NoteCategories)
+                .ThenInclude(it => it.Category)
+                .FirstOrDefault(it => it.NoteID == note.NoteID);
 
-      UpdateCategories(noteToUpdate, categories);
+            if (noteToUpdate == null)
+            {
+                throw new EntityNotFoundException();
+            }
 
-      await _myContext.SaveChangesAsync();
+            _myContext.Entry(noteToUpdate).Property("RowVersion").OriginalValue = note.RowVersion;
 
-      return true;
-    }
+            noteToUpdate.Title = note.Title;
+            noteToUpdate.Description = note.Description;
+            noteToUpdate.Markdown = note.Markdown;
 
-    private async Task<bool> SaveNewNote(Note note, string[] categories)
-    {
-      note.NoteCategories = new List<NoteCategory>();
-      _myContext.Notes.Add(note);
+            UpdateCategories(noteToUpdate, categories);
 
-      UpdateCategories(note, categories);
+            await _myContext.SaveChangesAsync();
 
-      await _myContext.SaveChangesAsync();
+            return true;
+        }
 
-      return true;
-    }
+        private async Task<bool> SaveNewNote(Note note, string[] categories)
+        {
+            note.NoteCategories = new List<NoteCategory>();
+            _myContext.Notes.Add(note);
 
-    public Tuple<int, int, List<Note>> GetAllNotes(NoteFilterModel filterModel)
-    {
-      var notes = _myContext.Notes
-          .Include(it => it.NoteCategories)
-          .ThenInclude(it => it.Category);
+            UpdateCategories(note, categories);
 
-      var filteredNotes = notes
-          .Where(it =>
-              filterModel.SelectedCategory == null ||
-              it.NoteCategories.FirstOrDefault(_ => _.Category.Name == filterModel.SelectedCategory) != null)
-          .Where(it => it.NoteDate >= filterModel.From)
-          .Where(it => it.NoteDate <= filterModel.To)
-          .ToList();
+            await _myContext.SaveChangesAsync();
 
-      var maxPages = (int)Math.Ceiling((double)((filteredNotes.Count - 1) / (filterModel.PageSize)));
-      filterModel.TrimPages(maxPages);
+            return true;
+        }
 
-      var paginatedNotes = filteredNotes
-          .Skip(filterModel.Page * filterModel.PageSize)
-          .Take(filterModel.PageSize)
-          .ToList();
+        public Tuple<int, int, List<Note>> GetAllNotes(NoteFilterModel filterModel)
+        {
+            var notes = _myContext.Notes
+                .Include(it => it.NoteCategories)
+                .ThenInclude(it => it.Category);
 
-      return new Tuple<int, int, List<Note>>(maxPages, filteredNotes.Count, paginatedNotes);
-    }
+            var notesFilteredByCategory = filterModel.Category == null
+                ? notes
+                : notes
+                    .Where(_ => _.NoteCategories.Any(__ => __.Category.Name == filterModel.Category));
 
-    public Note GetNoteById(int id)
-    {
-      var todoItem = _myContext.Notes
-          .Include(it => it.NoteCategories)
-          .ThenInclude(it => it.Category);
+            var filteredNotes = notesFilteredByCategory
+                .Where(it => it.NoteDate >= filterModel.From)
+                .Where(it => it.NoteDate <= filterModel.To)
+                .ToList();
 
-      return todoItem.FirstOrDefault(it => it.NoteID == id);
-    }
+            var maxPages = (int) Math.Ceiling((double) ((filteredNotes.Count - 1) / (filterModel.PageSize)));
+            filterModel.TrimPages(maxPages);
 
-    public Task<bool> SaveNote(Note note, string[] categories)
-    {
-      return note.NoteID == 0 ? SaveNewNote(note, categories) : UpdateNote(note, categories);
-    }
+            var paginatedNotes = filteredNotes
+                .Skip(filterModel.Page * filterModel.PageSize)
+                .Take(filterModel.PageSize)
+                .ToList();
 
-    public async Task<bool> RemoveNote(int id, byte[] rowVersion)
-    {
-      var todoItem = await _myContext.Notes.FindAsync(id);
+            return new Tuple<int, int, List<Note>>(maxPages, filteredNotes.Count, paginatedNotes);
+        }
 
-      if (todoItem == null)
-      {
-        throw new EntityNotFoundException();
-      }
+        public Note GetNoteById(int id)
+        {
+            var todoItem = _myContext.Notes
+                .Include(it => it.NoteCategories)
+                .ThenInclude(it => it.Category);
+
+            return todoItem.FirstOrDefault(it => it.NoteID == id);
+        }
+
+        public Task<bool> SaveNote(Note note)
+        {
+            var categories = note.Categories;
+
+            return note.NoteID == null ? SaveNewNote(note, categories) : UpdateNote(note, categories);
+        }
+
+        public async Task<bool> RemoveNote(int id, byte[] rowVersion)
+        {
+            var todoItem = await _myContext.Notes.FindAsync(id);
+
+            if (todoItem == null)
+            {
+                throw new EntityNotFoundException();
+            }
 //      if(!todoItem.RowVersion.SequenceEqual(rowVersion)){
 //        throw new ConcurrencyException();
 //      }
 
-      _myContext.Notes.Remove(todoItem);
-      await _myContext.SaveChangesAsync();
+            _myContext.Notes.Remove(todoItem);
+            await _myContext.SaveChangesAsync();
 
-      return true;
+            return true;
+        }
+
+        public HashSet<Category> GetAllCategories()
+        {
+            var noteCategories = _myContext.NoteCategories
+                .Include(it => it.Category)
+                .Include(it => it.Note)
+                .Where(it => it.Note != null)
+                .Select(it => it.Category)
+                .ToHashSet();
+
+            return noteCategories;
+        }
+
+        public List<string> GetNoteCategories(int noteId)
+        {
+            var categories = _myContext.NoteCategories
+                .Include(it => it.Category)
+                .Include(it => it.Note)
+                .Where(it => it.Note.NoteID == noteId)
+                .Select(it => it.Category.Name)
+                .ToList();
+
+            return categories;
+        }
     }
-
-    public HashSet<Category> GetAllCategories()
-    {
-      var noteCategories = _myContext.NoteCategories
-          .Include(it => it.Category)
-          .Include(it => it.Note)
-          .Where(it => it.Note != null)
-          .Select(it => it.Category)
-          .ToHashSet();
-
-      return noteCategories;
-    }
-
-    public List<string> GetNoteCategories(int noteId)
-    {
-      var categories = _myContext.NoteCategories
-          .Include(it => it.Category)
-          .Include(it => it.Note)
-          .Where(it => it.Note.NoteID == noteId)
-          .Select(it => it.Category.Name)
-          .ToList();
-
-      return categories;
-    }
-  }
 }

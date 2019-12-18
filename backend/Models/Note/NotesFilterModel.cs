@@ -12,31 +12,28 @@ namespace Z01.Models
     {
       From = other.From;
       To = other.To;
-      SelectedCategory = other.SelectedCategory;
+      Category = other.Category;
       Page = other.Page;
       PageSize = other.PageSize;
-      Error = other.Error;
     }
 
-    public NoteFilterModel(DateTime from, DateTime to, string category, int page, string error, int pageSize)
+    public NoteFilterModel(DateTime from, DateTime to, string category, int page, int pageSize)
     {
       From = from == new DateTime() ? DateTime.Now.AddDays(-7) : from;
       To = to == new DateTime() ? DateTime.Now.AddDays(1) : to;
-      SelectedCategory = category;
+      Category = category;
       Page = page < 0 ? 0 : page;
       PageSize = pageSize;
-      Error = error;
     }
 
-    public NoteFilterModel() : this(new DateTime(), new DateTime(), null, 0, null, 5)
+    public NoteFilterModel() : this(new DateTime(), new DateTime(), null, 0,  5)
     {
     }
 
 
     [DataType(DataType.Date)] public DateTime From { get; set; }
     [DataType(DataType.Date)] public DateTime To { get; set; }
-    public string SelectedCategory { get; set; }
-    public string Error { get; set; }
+    public string Category { get; set; }
     public int PageSize { get; set; }
 
     [HiddenInput]

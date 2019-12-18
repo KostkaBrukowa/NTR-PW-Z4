@@ -8,7 +8,7 @@ namespace Z4.GraphQL
     {
         public NoteSchema(IDependencyResolver resolver): base(resolver)
         {
-            Query = resolver.Resolve<NoteResolver>();
-//            Mutation = resolver.Resolve<NoteResolver>();
+            Query = resolver.Resolve<NoteQuery>();
+            Mutation = resolver.Resolve<NoteMutation>();
         }
     }}
