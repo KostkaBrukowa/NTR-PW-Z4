@@ -28,10 +28,10 @@ export const Form: React.FC<OwnProps> = ({ isPosting, isLoading, handleSubmit, v
   return (
     <StyledCard isLoading={spinnerVisible} title={spinnerLabel}>
       <StyledForm onSubmit={handleSubmit}>
-        <StyledTypography variant="body1">{values.id ? 'Edit' : 'Add new'} note</StyledTypography>
+        <StyledTypography variant="body1">{values.noteID ? 'Edit' : 'Add new'} note</StyledTypography>
         <TextFormField name="title" label="Title" as={StyledTitleField} />
         <CheckboxFormField name="markdown" label="Markdown" type="checkbox" />
-        <TextFormField name="content" label="Content" rows={2} as={StyledContentField} />
+        <TextFormField name="description" label="Content" rows={3} as={StyledContentField} multiline />
         <FieldArray name="categories" validateOnChange>
           {(arrayProps): ReactNode => <CategoryFormPicker {...arrayProps} />}
         </FieldArray>

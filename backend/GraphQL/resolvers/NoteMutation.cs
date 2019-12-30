@@ -13,20 +13,16 @@ namespace Z4.GraphQL.resolvers
             Name = "Mutation";
 
             Field<NonNullGraphType<BooleanGraphType>>(
-                "newNote",
+                "saveNote",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<NoteInputType>> {Name = "input"}),
                 resolve: context => noteService.SaveNote(context.GetArgument<Note>("input")));
 
             Field<NonNullGraphType<BooleanGraphType>>(
-                "updateNote",
-                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<NoteUpdateInputType>>
-                    {Name = "input"}),
-                resolve: context => noteService.SaveNote(context.GetArgument<Note>("input")));
-
-            Field<NonNullGraphType<BooleanGraphType>>(
                 "deleteNote",
-                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> {Name = "id"}),
-                resolve: context => noteService.RemoveNote(context.GetArgument<int>("id"), null));
+                arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> {Name = "id"},
+                    new QueryArgument<NonNullGraphType<StringGraphType>> {Name = "rowVersion"}),
+                resolve: context =>
+                    noteService.RemoveNote(context.GetArgument<int>("id"), context.GetArgument<string>("rowVersion")));
         }
     }
 }

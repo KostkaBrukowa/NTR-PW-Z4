@@ -101,12 +101,12 @@ namespace Z4.Controllers
 //            public string Error { get; set; }
 //        }
 //
-//        public class PaginatedResponse<T>
-//        {
-//            public int total { get; set; }
-//            public IEnumerable<T> values { get; set; }
-//        }
-//    }
+    public class PaginatedResponse<T>
+    {
+        public int total { get; set; }
+        public IEnumerable<T> values { get; set; }
+    }
+
     [Route("graphql")]
     [ApiController]
     public class GraphQLController : Controller
@@ -134,15 +134,15 @@ namespace Z4.Controllers
                 _.Query = query.Query;
                 _.OperationName = query.OperationName;
                 _.Inputs = inputs;
+//                _.ExposeExceptions = true;
             });
 
-            if(result.Errors?.Count > 0)
+            if (result.Errors?.Count > 0)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(result);
             }
 
             return Ok(result);
         }
     }
-
 }

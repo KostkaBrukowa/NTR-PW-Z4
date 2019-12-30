@@ -10,8 +10,8 @@ namespace Z01.Models
 
     public NoteFilterModel(NoteFilterModel other)
     {
-      From = other.From;
-      To = other.To;
+      DateFrom = other.DateFrom;
+      DateTo = other.DateTo;
       Category = other.Category;
       Page = other.Page;
       PageSize = other.PageSize;
@@ -19,8 +19,8 @@ namespace Z01.Models
 
     public NoteFilterModel(DateTime from, DateTime to, string category, int page, int pageSize)
     {
-      From = from == new DateTime() ? DateTime.Now.AddDays(-7) : from;
-      To = to == new DateTime() ? DateTime.Now.AddDays(1) : to;
+      DateFrom = from == new DateTime() ? DateTime.Now.AddDays(-7) : from;
+      DateTo = to == new DateTime() ? DateTime.Now.AddDays(1) : to;
       Category = category;
       Page = page < 0 ? 0 : page;
       PageSize = pageSize;
@@ -31,8 +31,8 @@ namespace Z01.Models
     }
 
 
-    [DataType(DataType.Date)] public DateTime From { get; set; }
-    [DataType(DataType.Date)] public DateTime To { get; set; }
+    [DataType(DataType.Date)] public DateTime DateFrom { get; set; }
+    [DataType(DataType.Date)] public DateTime DateTo { get; set; }
     public string Category { get; set; }
     public int PageSize { get; set; }
 

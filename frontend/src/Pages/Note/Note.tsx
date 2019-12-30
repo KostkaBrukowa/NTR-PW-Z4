@@ -3,60 +3,67 @@ import { navigate, RouteComponentProps } from '@reach/router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { FormikHelpers } from 'formik/dist/types';
-import { useFetchNote, useFetchSaveNote } from '../../hooks/note-requests/useNoteRequest';
 import { Form } from './Form';
-import { NoteModel } from '../../data/models/NoteModel';
-import { ErrorDialog } from '../../molecules/Dialog/Dialog';
+import { useFetchSingleNoteQuery, useSaveNoteMutation } from '../../generated/graphql';
+import { useDispatchError } from '../../hooks/errors/useDispatchError';
 
 interface RouteProps {
   noteId: string;
-  style: React.CSSProperties;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;
 
 export interface FormValues {
-  id: string | null;
+  noteID: string | null;
+  rowVersionString: string | null;
   title: string;
-  content: string;
+  description: string;
   categories: string[];
   markdown: boolean;
 }
 
 type SubmitHandler<Values> = (values: Values, formikHelpers: FormikHelpers<Values>) => void | Promise<any>;
 
-const defaultInitialValues = {
-  id: null,
+const defaultInitialValues: FormValues = {
+  noteID: null,
+  rowVersionString: null,
   title: '',
   markdown: false,
-  content: '',
+  description: '',
   categories: []
 };
 
 const validationSchema = Yup.object<FormValues>({
-  id: Yup.string().nullable(),
+  noteID: Yup.string().nullable(),
+  rowVersionString: Yup.string().nullable(),
   title: Yup.string()
     .min(3)
     .max(64)
     .required(),
   markdown: Yup.boolean(),
-  content: Yup.string()
+  description: Yup.string()
     .min(1)
     .max(1024)
     .required(),
   categories: Yup.array()
     .of(Yup.string())
-    .min(1)
+    // .min(1)
     .max(10)
 });
 
-export const Note: React.FC<OwnProps> = ({ noteId, style }) => {
+export const Note: React.FC<OwnProps> = ({ noteId }) => {
   const [initialValues, setInitialValues] = useState<FormValues>(defaultInitialValues);
-  const [isLoading, note] = useFetchNote(noteId === 'new' ? undefined : noteId);
-  const [noteToPost, setNoteToPost] = useState<NoteModel | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [postNote, isPosting, error] = useFetchSaveNote(noteToPost, () => {
-    navigate('/');
+  const { dispatchError } = useDispatchError();
+  const { data, loading } = useFetchSingleNoteQuery({
+    variables: { id: noteId! },
+    skip: noteId === 'new',
+    fetchPolicy: 'no-cache'
+  });
+
+  const [postNote, { loading: isPosting, error }] = useSaveNoteMutation({
+    onCompleted: () => {
+      navigate('/');
+    }
   });
 
   useEffect(() => {
@@ -66,39 +73,31 @@ export const Note: React.FC<OwnProps> = ({ noteId, style }) => {
   }, [noteId]);
 
   useEffect(() => {
-    if (note) {
+    if (data && data.note) {
+      const { __typename, ...note } = data.note;
       setInitialValues(note);
     }
-  }, [note]);
+  }, [data]);
 
   useEffect(() => {
     if (error) {
-      setNoteToPost(null);
-      setDialogOpen(true);
+      dispatchError(error);
     }
   }, [error]);
 
   const handleSubmit: SubmitHandler<FormValues> = (values): void => {
-    setNoteToPost(new NoteModel().copy({ ...initialValues, ...values }));
-    postNote();
+    postNote({ variables: { input: values } });
   };
 
   return (
-    <div style={{ ...style, willChange: 'transform, opacity' }}>
-      <ErrorDialog
-        headingText="There was an error in a form"
-        infoText="Please try again"
-        actions={['Ok']}
-        onClose={(): void => setDialogOpen(false)}
-        open={dialogOpen}
-      />
+    <div>
       <Formik<FormValues>
         initialValues={initialValues}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
         enableReinitialize
       >
-        {(formProps): ReactNode => <Form {...formProps} isPosting={isPosting} isLoading={isLoading} />}
+        {(formProps): ReactNode => <Form {...formProps} isPosting={isPosting} isLoading={loading} />}
       </Formik>
     </div>
   );

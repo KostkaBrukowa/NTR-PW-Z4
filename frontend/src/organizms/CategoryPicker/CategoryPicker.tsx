@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { InputLabel, MenuItem, Select } from '@material-ui/core';
 import { StyledFormControl } from './Styled';
-import { useFetchAllCategories } from '../../hooks/categories-requests/CategoriesRequests';
+import { useFetchAllCategoriesQuery } from '../../generated/graphql';
 
 interface OwnProps {
   category: string | null;
@@ -10,7 +10,7 @@ interface OwnProps {
 }
 
 export const CategoryPicker: React.FC<OwnProps> = ({ category, onChange }) => {
-  const { data } = useFetchAllCategories();
+  const { data } = useFetchAllCategoriesQuery({ fetchPolicy: 'no-cache' });
 
   const handleChange = (event: ChangeEvent<{ name?: string; value: unknown }>): void => {
     onChange(event.target.value as string);

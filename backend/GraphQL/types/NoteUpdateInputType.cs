@@ -11,7 +11,7 @@ namespace Z4.GraphQL.types
         {
             Name = "NoteUpdateInput";
 
-            Field<NonNullGraphType<IdGraphType>>("noteId");
+            Field<NonNullGraphType<IdGraphType>>("noteID");
         }
     }
 }

@@ -1,0 +1,13 @@
+query FetchAllNotes($filters: NoteFilters!) {
+    notes(noteFilters: $filters) {
+        total
+        values {
+            noteID
+            title
+            description
+            noteDate
+            markdown
+            rowVersionString
+        }
+    }
+}

@@ -37,10 +37,10 @@ namespace Z4
                     });
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddDbContext<MyContext>(opt =>
-                opt.UseInMemoryDatabase("AllList"));
-//           services.AddDbContext<MyContext>(options =>
-//               options.UseSqlServer(Configuration.GetConnectionString("MyContext"))); 
+//            services.AddDbContext<MyContext>(opt =>
+//                opt.UseInMemoryDatabase("AllList"));
+           services.AddDbContext<MyContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("MyContext"))); 
             var sp = services.BuildServiceProvider();
             services.AddSingleton<ISchema>(new NoteSchema(new FuncDependencyResolver(type => sp.GetService(type))));
         }

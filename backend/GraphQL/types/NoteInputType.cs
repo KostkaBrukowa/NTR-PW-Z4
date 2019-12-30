@@ -11,10 +11,12 @@ namespace Z4.GraphQL.types
         {
             Name = "NoteInput";
 
+            Field<IdGraphType>("noteID");
             Field<NonNullGraphType<StringGraphType>>("title");
             Field<NonNullGraphType<StringGraphType>>("description");
             Field<BooleanGraphType>("markdown");
             Field<NonNullGraphType<ListGraphType<NonNullGraphType<StringGraphType>>>>("categories");
+            Field<StringGraphType>("rowVersionString");
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Z4
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();
+            byte[] x = {1, 2};
             using (IServiceScope scope = host.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<MyContext>();
@@ -19,6 +20,7 @@ namespace Z4
                     {
                         Title = "First Author",
                         Description = "First descp",
+                        RowVersion = x
                     }
                 );
                 context.Notes.Add(
@@ -26,6 +28,23 @@ namespace Z4
                     {
                         Title = "Second Author",
                         Description = "Second descp",
+                        RowVersion = x
+                    }
+                );
+                context.Notes.Add(
+                    new Note
+                    {
+                        Title = "Third Author",
+                        Description = "Second descp",
+                        RowVersion = x
+                    }
+                );
+                context.Notes.Add(
+                    new Note
+                    {
+                        Title = "Fourth Author",
+                        Description = "Second descp",
+                        RowVersion = x
                     }
                 );
 

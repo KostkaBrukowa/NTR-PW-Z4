@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GraphQL;
 using Microsoft.EntityFrameworkCore;
 using Z01.Exceptions;
 using Z01.Models;
@@ -49,6 +50,11 @@ namespace Z01.services
 
         private async Task<bool> UpdateNote(Note note, string[] categories)
         {
+            if (note.RowVersionString == null)
+            {
+                throw new ExecutionError("Row version was not passed");
+            }
+
             var noteToUpdate = _myContext.Notes
                 .Include(it => it.NoteCategories)
                 .ThenInclude(it => it.Category)
@@ -56,10 +62,15 @@ namespace Z01.services
 
             if (noteToUpdate == null)
             {
-                throw new EntityNotFoundException();
+                throw new ExecutionError("Note was not found");
             }
 
-            _myContext.Entry(noteToUpdate).Property("RowVersion").OriginalValue = note.RowVersion;
+
+//            throw new ExecutionError("Title was not unique");
+
+            var rowVersion = Convert.FromBase64String(note.RowVersionString);
+
+            _myContext.Entry(noteToUpdate).Property("RowVersion").OriginalValue = rowVersion;
 
             noteToUpdate.Title = note.Title;
             noteToUpdate.Description = note.Description;
@@ -77,6 +88,8 @@ namespace Z01.services
             note.NoteCategories = new List<NoteCategory>();
             _myContext.Notes.Add(note);
 
+//            throw new ExecutionError("Title was not unique.");
+
             UpdateCategories(note, categories);
 
             await _myContext.SaveChangesAsync();
@@ -84,11 +97,12 @@ namespace Z01.services
             return true;
         }
 
-        public Tuple<int, int, List<Note>> GetAllNotes(NoteFilterModel filterModel)
+        public Tuple<int, List<Note>> GetAllNotes(NoteFilterModel filterModel)
         {
             var notes = _myContext.Notes
                 .Include(it => it.NoteCategories)
-                .ThenInclude(it => it.Category);
+                .ThenInclude(it => it.Category)
+                .ToList();
 
             var notesFilteredByCategory = filterModel.Category == null
                 ? notes
@@ -96,9 +110,11 @@ namespace Z01.services
                     .Where(_ => _.NoteCategories.Any(__ => __.Category.Name == filterModel.Category));
 
             var filteredNotes = notesFilteredByCategory
-                .Where(it => it.NoteDate >= filterModel.From)
-                .Where(it => it.NoteDate <= filterModel.To)
+                .Where(it => it.NoteDate >= filterModel.DateFrom)
+                .Where(it => it.NoteDate <= filterModel.DateTo.AddDays(1))
                 .ToList();
+
+//            filteredNotes.ForEach(it => it.RowVersionString = it.RowVersion.ToString());
 
             var maxPages = (int) Math.Ceiling((double) ((filteredNotes.Count - 1) / (filterModel.PageSize)));
             filterModel.TrimPages(maxPages);
@@ -108,7 +124,7 @@ namespace Z01.services
                 .Take(filterModel.PageSize)
                 .ToList();
 
-            return new Tuple<int, int, List<Note>>(maxPages, filteredNotes.Count, paginatedNotes);
+            return new Tuple<int, List<Note>>(filteredNotes.Count, paginatedNotes);
         }
 
         public Note GetNoteById(int id)
@@ -127,17 +143,20 @@ namespace Z01.services
             return note.NoteID == null ? SaveNewNote(note, categories) : UpdateNote(note, categories);
         }
 
-        public async Task<bool> RemoveNote(int id, byte[] rowVersion)
+        public async Task<bool> RemoveNote(int id, string rowVersionString)
         {
             var todoItem = await _myContext.Notes.FindAsync(id);
+            var rowVersion = Convert.FromBase64String(rowVersionString);
 
             if (todoItem == null)
             {
-                throw new EntityNotFoundException();
+                throw new ExecutionError("Note was not found");
             }
-//      if(!todoItem.RowVersion.SequenceEqual(rowVersion)){
-//        throw new ConcurrencyException();
-//      }
+
+            if (!todoItem.RowVersion.SequenceEqual(rowVersion))
+            {
+                throw new ExecutionError("Someone has deleted this note before you");
+            }
 
             _myContext.Notes.Remove(todoItem);
             await _myContext.SaveChangesAsync();

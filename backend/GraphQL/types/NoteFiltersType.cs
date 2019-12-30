@@ -11,8 +11,8 @@ namespace Z4.GraphQL.types
         {
             Name = "NoteFilters";
 
-            Field<DateGraphType>("from");
-            Field<DateGraphType>("to");
+            Field<DateGraphType>("dateFrom");
+            Field<DateGraphType>("dateTo");
             Field<StringGraphType>("category");
             Field<IntGraphType>("page");
             Field<IntGraphType>("pageSize");

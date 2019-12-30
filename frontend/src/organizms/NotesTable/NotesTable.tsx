@@ -1,19 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { NoteTableRow } from './NoteTableRow';
 import { NoteTablePagination } from './NoteTablePagination';
 import { StyledNotesCardContent } from './Styled';
-import { useFetchAllNotes } from '../../hooks/note-requests/useNoteRequest';
+import { useFetchAllNotesQuery } from '../../generated/graphql';
+import { useFilters } from '../../hooks/filters/useFilters';
+import { useDispatchError } from '../../hooks/errors/useDispatchError';
 
-export const NotesTable: React.FC = props => {
-  const [isLoading, notes, total, reloadNotes] = useFetchAllNotes();
+export const NotesTable: React.FC = () => {
+  const { filters } = useFilters();
+  const { dispatchError } = useDispatchError();
+  const { data, loading, refetch, error } = useFetchAllNotesQuery({
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'no-cache',
+    variables: {
+      filters
+    }
+  });
 
-  const handleDelete = () => {
-    reloadNotes();
+  useEffect(() => {
+    dispatchError(error);
+  }, [error]);
+
+  const handleDelete = (): void => {
+    refetch();
   };
 
   return (
-    <StyledNotesCardContent isLoading={isLoading} title="Loading...">
+    <StyledNotesCardContent isLoading={loading} title="Loading...">
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -27,10 +41,12 @@ export const NotesTable: React.FC = props => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {notes && notes.map(note => <NoteTableRow note={note} key={note.id!} onDelete={handleDelete} />)}
+          {data &&
+            data.notes &&
+            data.notes.values.map(note => <NoteTableRow note={note} key={note.noteID} onDelete={handleDelete} />)}
         </TableBody>
       </Table>
-      <NoteTablePagination allElementsCount={total} />
+      <NoteTablePagination allElementsCount={data && data.notes.total} />
     </StyledNotesCardContent>
   );
 };
