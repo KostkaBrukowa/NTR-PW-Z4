@@ -18,7 +18,7 @@ export function useFilters() {
 
   const setDateTo = (dateTo: string): void => setFilters(state.filters.copy({ dateTo: new Date(dateTo) }));
 
-  const setCategory = (category: string): void => setFilters(state.filters.copy({ category: category }));
+  const setCategory = (category: string | null): void => setFilters(state.filters.copy({ category: category }));
 
   const clearFilters = (): void => setFilters(state.filters.clear());
 

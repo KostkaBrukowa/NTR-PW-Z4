@@ -13,8 +13,8 @@ export const NetworkErrorDialog: React.FC = () => {
     <ErrorDialog
       actions={['Ok']}
       open={!!error}
-      headingText={headingText}
-      infoText={requestErrorText}
+      headingText={requestErrorText}
+      infoText={headingText}
       onClose={dispatchClearError}
     />
   );

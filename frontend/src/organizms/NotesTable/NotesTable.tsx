@@ -22,10 +22,6 @@ export const NotesTable: React.FC = () => {
     dispatchError(error);
   }, [error]);
 
-  const handleDelete = (): void => {
-    refetch();
-  };
-
   return (
     <StyledNotesCardContent isLoading={loading} title="Loading...">
       <Table aria-label="simple table">
@@ -43,7 +39,7 @@ export const NotesTable: React.FC = () => {
         <TableBody>
           {data &&
             data.notes &&
-            data.notes.values.map(note => <NoteTableRow note={note} key={note.noteID} onDelete={handleDelete} />)}
+            data.notes.values.map(note => <NoteTableRow note={note} key={note.noteID} onDelete={refetch} />)}
         </TableBody>
       </Table>
       <NoteTablePagination allElementsCount={data && data.notes.total} />

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 export const StyledWrapper = styled.div`
-  grid-column: 1 / span 3;
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-column: 1 / span 3;
+  grid-template-columns: 2fr 4fr;
   grid-column-gap: 16px;
 `;
 
@@ -19,6 +19,8 @@ export const StyledCategoryInputWrapper = styled.div`
 export const StyledCategoriesWrapper = styled.div`
   //display: grid;
   //grid-row-gap: 16px;
+  padding: 0 1rem;
   overflow-y: auto;
+  overflow-x: hidden;
   height: 10rem;
 `;

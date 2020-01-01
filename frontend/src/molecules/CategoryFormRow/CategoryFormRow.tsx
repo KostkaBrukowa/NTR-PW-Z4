@@ -14,7 +14,7 @@ export const CategoryFormRow: React.FC<OwnProps> = ({ categoryName, onRemove, st
 
   return (
     <StyledDiv style={style}>
-      <StyledTypography variant="h6">{categoryName}</StyledTypography>
+      <StyledTypography variant="subtitle1">{categoryName}</StyledTypography>
       <StyledIconButton onClick={handleRemove}>
         <DeleteIcon color="error" />
       </StyledIconButton>

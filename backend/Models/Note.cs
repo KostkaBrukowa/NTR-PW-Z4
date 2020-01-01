@@ -11,7 +11,7 @@ namespace Z01.Models
         private string _rowVersionString;
         [Column("IDNote")] public int? NoteID { get; set; }
         [Column("Date")] public DateTime NoteDate { get; set; } = DateTime.Now;
-        [Column("IsMarkdown")] public bool Markdown { get; set; }
+        [Column("IsMarkdown")] public Int16 Markdown { get; set; }
 
         [Required]
         [MinLength(1), MaxLength(32)]

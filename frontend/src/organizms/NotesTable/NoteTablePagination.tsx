@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TablePagination } from '@material-ui/core';
 import { useFilters } from '../../hooks/filters/useFilters';
 
@@ -18,6 +18,13 @@ export const NoteTablePagination: React.FC<OwnProps> = ({ allElementsCount }) =>
 
   const handlePageChange: PageChanger = (_, page) => setPage(page);
   const handlePageSizeChange: PageSizeChanger = event => setPageSize(event && +event.target.value);
+  const pageExceeded = (): boolean => Boolean(allElementsCount && page * pageSize >= allElementsCount);
+
+  useEffect(() => {
+    if (pageExceeded()) {
+      setPage(page - 1);
+    }
+  }, [allElementsCount, page, pageSize, setPage]);
 
   return (
     <TablePagination
@@ -25,7 +32,7 @@ export const NoteTablePagination: React.FC<OwnProps> = ({ allElementsCount }) =>
       component="div"
       count={allElementsCount || 0}
       rowsPerPage={pageSize}
-      page={page}
+      page={pageExceeded() ? page - 1 : page}
       onChangePage={handlePageChange}
       onChangeRowsPerPage={handlePageSizeChange}
     />

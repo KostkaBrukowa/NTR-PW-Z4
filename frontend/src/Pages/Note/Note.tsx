@@ -47,8 +47,6 @@ const validationSchema = Yup.object<FormValues>({
     .required(),
   categories: Yup.array()
     .of(Yup.string())
-    // .min(1)
-    .max(10)
 });
 
 export const Note: React.FC<OwnProps> = ({ noteId }) => {
@@ -75,7 +73,7 @@ export const Note: React.FC<OwnProps> = ({ noteId }) => {
   useEffect(() => {
     if (data && data.note) {
       const { __typename, ...note } = data.note;
-      setInitialValues(note);
+      setInitialValues({ ...note, description: note.description.trimEnd() });
     }
   }, [data]);
 
@@ -86,7 +84,14 @@ export const Note: React.FC<OwnProps> = ({ noteId }) => {
   }, [error]);
 
   const handleSubmit: SubmitHandler<FormValues> = (values): void => {
-    postNote({ variables: { input: values } });
+    postNote({
+      variables: {
+        input: {
+          ...values,
+          markdown: values.markdown ? 1 : 0
+        }
+      }
+    });
   };
 
   return (

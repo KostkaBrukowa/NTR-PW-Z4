@@ -5,8 +5,12 @@ export function weekAgo(): Date {
   return today;
 }
 
-export function dateFromDatetime(date: Date): string {
+export function dateFromDatetime(date: Date | string): string {
   try {
+    if (typeof date === 'string') {
+      return new Date(date).toISOString().slice(0, 10);
+    }
+
     return date.toISOString().slice(0, 10);
   } catch {
     return new Date().toISOString().slice(0, 10);
