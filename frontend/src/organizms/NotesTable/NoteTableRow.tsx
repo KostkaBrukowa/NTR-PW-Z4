@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, TableCell } from '@material-ui/core';
 import { navigate } from '@reach/router';
 
 import { StyledDeleteTableCell, StyledTableRow } from './Styled';
 import { dateFromDatetime } from '../../utils/Date';
 import { Note, useDeleteNoteMutation } from '../../generated/graphql';
+import { useDispatchError } from '../../hooks/errors/useDispatchError';
 
 interface OwnProps {
   note: Omit<Note, 'categories'>;
@@ -14,7 +15,8 @@ interface OwnProps {
 
 export const NoteTableRow: React.FC<OwnProps> = ({ note, onDelete }) => {
   const { noteDate, title, noteID, rowVersionString } = note;
-  const [deleteNote, { loading }] = useDeleteNoteMutation({});
+  const [deleteNote, { loading, error }] = useDeleteNoteMutation({});
+  const { dispatchError } = useDispatchError();
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     event.stopPropagation();
@@ -22,6 +24,12 @@ export const NoteTableRow: React.FC<OwnProps> = ({ note, onDelete }) => {
     await deleteNote({ variables: { id: noteID, rowVersion: rowVersionString } });
     onDelete();
   };
+
+  useEffect(() => {
+    if (error) {
+      dispatchError(error);
+    }
+  }, [error]);
 
   const handleRowClick = (): Promise<void> | boolean => !loading && navigate(`/note/${noteID}`);
 
