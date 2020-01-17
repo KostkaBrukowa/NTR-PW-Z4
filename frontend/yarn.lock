@@ -2444,7 +2444,7 @@ apollo-client@^2.6.7, apollo-client@^2.6.8:
     tslib "^1.10.0"
     zen-observable "^0.8.0"
 
-apollo-link-error@^1.0.3, apollo-link-error@^1.1.12:
+apollo-link-error@^1.0.3:
   version "1.1.12"
   resolved "https://registry.yarnpkg.com/apollo-link-error/-/apollo-link-error-1.1.12.tgz#e24487bb3c30af0654047611cda87038afbacbf9"
   integrity sha512-psNmHyuy3valGikt/XHJfe0pKJnRX19tLLs6P6EHRxg+6q6JMXNVLYPaQBkL0FkwdTCB0cbFJAGRYCBviG8TDA==
@@ -2462,7 +2462,7 @@ apollo-link-http-common@^0.2.15:
     ts-invariant "^0.4.0"
     tslib "^1.9.3"
 
-apollo-link-http@^1.3.1, apollo-link-http@^1.5.16:
+apollo-link-http@^1.3.1:
   version "1.5.16"
   resolved "https://registry.yarnpkg.com/apollo-link-http/-/apollo-link-http-1.5.16.tgz#44fe760bcc2803b8a7f57fc9269173afb00f3814"
   integrity sha512-IA3xA/OcrOzINRZEECI6IdhRp/Twom5X5L9jMehfzEo2AXdeRwAMlH5LuvTZHgKD8V1MBnXdM6YXawXkTDSmJw==
@@ -10165,11 +10165,6 @@ react-fast-compare@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
-
-react-fetch-hook@^1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/react-fetch-hook/-/react-fetch-hook-1.7.1.tgz#d15d67ccab4087d461c6aaaf31f4cbcab7bb0f6e"
-  integrity sha512-VbDQKp1vVJoonH9wfgot3ayJdTZ6rAB5TQmqG40DE1SlJJ+UqhjlT+cynn/ofP5j1qYr5QLls87vqI2yuUoqYw==
 
 react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
   version "16.12.0"

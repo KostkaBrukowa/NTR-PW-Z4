@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FieldArrayRenderProps, useField } from 'formik';
 import { Button, TextField } from '@material-ui/core';
 import { CategoryFormRow } from '../../molecules/CategoryFormRow/CategoryFormRow';
-import { StyledCategoriesWrapper, StyledCategoryInputWrapper, StyledWrapper } from './Styled';
+import { StyledCategoriesWrapper, StyledCategoryInputWrapper, StyledWrapper, StyledAddButton } from './Styled';
 import { animated, useTransition, config } from 'react-spring';
 
 const transition = {
@@ -38,9 +38,9 @@ export const CategoryFormPicker: React.FC<FieldArrayRenderProps> = ({ push, remo
       </StyledCategoriesWrapper>
       <StyledCategoryInputWrapper>
         <TextField value={category} onChange={event => setCategory(event.target.value)} label="Add category" />
-        <Button variant="outlined" color="secondary" onClick={handleAddCategoryButtonClick} size="small">
+        <StyledAddButton variant="outlined" color="secondary" onClick={handleAddCategoryButtonClick} size="small">
           Add
-        </Button>
+        </StyledAddButton>
       </StyledCategoryInputWrapper>
     </StyledWrapper>
   );

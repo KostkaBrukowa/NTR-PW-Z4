@@ -13,6 +13,6 @@ export function dateFromDatetime(date: Date | string): string {
 
     return date.toISOString().slice(0, 10);
   } catch {
-    return new Date().toISOString().slice(0, 10);
+    return '';
   }
 }

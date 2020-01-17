@@ -17,8 +17,8 @@ export const Filters: React.FC = () => {
 
   return (
     <StyledCardContent>
-      <DateField id="from" label="Date from" defaultValue={dateFromDatetime(dateFrom)} onChange={setDateFrom} />
-      <DateField id="to" label="Date to" defaultValue={dateFromDatetime(dateTo)} onChange={setDateTo} />
+      <DateField id="from" label="Date from" value={dateFromDatetime(dateFrom)} onChange={setDateFrom} />
+      <DateField id="to" label="Date to" value={dateFromDatetime(dateTo)} onChange={setDateTo} />
       <CategoryPicker category={category} onChange={setCategory} />
       <Button color="secondary" variant="contained" size="large" onClick={clearFilters}>
         Clear

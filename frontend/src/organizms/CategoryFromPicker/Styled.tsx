@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from '@material-ui/core';
 
 export const StyledWrapper = styled.div`
   display: grid;
@@ -23,4 +24,8 @@ export const StyledCategoriesWrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   height: 10rem;
+`;
+
+export const StyledAddButton = styled(Button)`
+  margin-top: 18px;
 `;
