@@ -15,7 +15,8 @@ const AnimatedCategoryFormRow = animated(CategoryFormRow);
 
 export const CategoryFormPicker: React.FC<FieldArrayRenderProps> = ({ push, remove, name }) => {
   const [category, setCategory] = useState('');
-  const { value: categories } = useField<string[]>(name)[0];
+  const { value } = useField<string[]>(name)[0];
+  const categories = value || [];
   const transitions = useTransition(categories, item => item, transition);
 
   const handleAddCategoryButtonClick = (): void => {
@@ -32,9 +33,12 @@ export const CategoryFormPicker: React.FC<FieldArrayRenderProps> = ({ push, remo
   return (
     <StyledWrapper>
       <StyledCategoriesWrapper>
-        {transitions.reverse().map(({ item, props, key }) => (
-          <AnimatedCategoryFormRow key={key} style={props} categoryName={item} onRemove={handleRemove} />
-        ))}
+        {transitions
+          .filter(Boolean)
+          .reverse()
+          .map(({ item, props, key }) => (
+            <AnimatedCategoryFormRow key={key} style={props} categoryName={item} onRemove={handleRemove} />
+          ))}
       </StyledCategoriesWrapper>
       <StyledCategoryInputWrapper>
         <TextField value={category} onChange={event => setCategory(event.target.value)} label="Add category" />
